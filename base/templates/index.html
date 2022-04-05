@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block layout  %}
+{% if request.user.is_authenticated %}
+    {% if request.user.blog.all %}
+    {% else %}
+    현재 블로그가 없어요 만드시겠어요?
+    <form class="form" action="{% url 'blog:post_blog' request.user.pk %}" method = "post">
+        {% csrf_token %}
+        <input name = "name" value="{{form.username.value|default_if_none:''}}"  type="text" placeholder ="블로그이름" autocomplete="off">
+        <button type="submit">생성하기</button>
+    </form>
+    {% endif %}
+{% endif %}
+<div class="blog-list">
+    <p>현재 개설된 블로그 목록이에요</p>
+    {% for blog in blogs %}
+    <div>
+        <a href="{% url 'blog:blog' blog.pk %}">{{blog.name}}</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

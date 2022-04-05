@@ -1,0 +1,48 @@
+<div class='ellip'>
+
+    {% if request.user.blog.exists %}
+    <form action="{% url 'blog:edit' request.user.blog.first.pk %}?type=post" method="post">
+        {% csrf_token %}
+        <button type="submit">글쓰기</button>
+    </form>
+    {% endif %}
+    <div class="todo-con  none-scroll">
+        투두리스트.
+        {% if request.user.is_authenticated %}
+        <form class="todo-card" action="{% url 'blog:todo' %}?action=post" method="post">
+            {% csrf_token %}
+            <input type="text" name="context" placeholder="내용을적어주세요">
+            <button type="submit">작성</button>
+        </form>
+        {% for todo in todolist %}
+        <div class="todo-card">
+            <div class="todo-content none-scroll">
+                {{forloop.counter}}, {{todo.context}}
+            </div>
+            <div class="todo-status">
+                <form class="half button"action="{% url 'blog:todo' %}?action=done&todo_id={{todo.pk}}" method="post">
+                    {% csrf_token %}
+                    <button type="submit ellip">완료</button>
+                </form>
+                <form class="half button"action="{% url 'blog:todo' %}?action=delete&todo_id={{todo.pk}}"method="post">
+                    {% csrf_token %}
+                    <button type="submit ellip">삭제</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="comment-con">
+        {% if commentlist %}
+        <div>최근댓글이에요</div>
+        {% for comment in commentlist %}
+        <a class="ellip" href="{{comment.get_absolute_url }}">
+            {{forloop.counter}}, {{comment.c_context}}
+        </a>
+        {% endfor %}
+        {% else %}
+        <div>댓글이없어요</div>
+        {% endif %}
+    </div>
+</div>

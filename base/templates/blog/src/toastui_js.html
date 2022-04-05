@@ -1,0 +1,169 @@
+
+<script>
+  {% include 'blog/src/toastui_plugins.html' %}
+  try{
+    var article_context = JSON.parse(context.innerHTML)
+  }catch(e){
+    var article_context = ""
+  }
+  var editors =
+  function ToastEditor__escape(origin) {
+      return origin.replaceAll('<t-script', "<script").replaceAll('</t-script', "</script");
+  }
+  function ToastEditor__init() {
+      $(".toast-ui-editor").each(function (index, node) {
+        const $node = $(node);
+        const $initialValueEl = $node.find(" > script");
+        const initialValue =
+          $initialValueEl.length == 0 ? "" : ToastEditor__escape($initialValueEl.html().trim());
+    
+        editor = new toastui.Editor({
+          el: node,
+          previewStyle: "vertical",
+          initialValue: initialValue,
+          height: "70vh",
+          placeholder: 'Please enter text.',
+          //theme: toastUiThemeName,
+          plugins: [
+            [toastui.Editor.plugin.chart, ToastEditor__chartOptions],
+            [toastui.Editor.plugin.codeSyntaxHighlight, { highlighter: Prism }],
+            toastui.Editor.plugin.colorSyntax,
+            toastui.Editor.plugin.tableMergedCell,
+            toastui.Editor.plugin.uml,
+            katexPlugin,
+            youtubePlugin,
+            codepenPlugin,
+            replPlugin,
+            configPlugin,
+            hidePlugin
+          ],
+          customHTMLSanitizer: (html) => {
+            return (
+              DOMPurify.sanitize(html, {
+                ADD_TAGS: ["iframe"],
+                ADD_ATTR: [
+                  "width",
+                  "height",
+                  "allow",
+                  "allowfullscreen",
+                  "frameborder",
+                  "scrolling",
+                  "style",
+                  "title",
+                  "loading",
+                  "allowtransparency"
+                ]
+              }) || ""
+            );
+          }
+        });
+    
+        $node.data("data-toast-editor", editor);
+        editor.setMarkdown(article_context);
+        article_context = "";
+        setTimeout(function(){$('.ProseMirror').scrollTop(0)},0.5)
+      });
+    }
+  function ToastEditorView__init() {
+    $(".toast-ui-viewer").each(function (index, node) {
+      const $node = $(node);
+      const $initialValueEl = $node.find(" > script");
+      const initialValue =
+        $initialValueEl.length == 0 ? "" : ToastEditor__escape($initialValueEl.html().trim());
+      $node.empty();
+  
+      viewer = new toastui.Editor.factory({
+        el: node,
+        initialValue: initialValue,
+        viewer: true,
+        plugins: [
+          [toastui.Editor.plugin.codeSyntaxHighlight, { highlighter: Prism }],
+          toastui.Editor.plugin.colorSyntax,
+          toastui.Editor.plugin.tableMergedCell,
+          toastui.Editor.plugin.uml,
+          katexPlugin,
+          youtubePlugin,
+          codepenPlugin,
+          replPlugin,
+          configPlugin,
+          hidePlugin
+        ],
+        customHTMLSanitizer: (html) => {
+          return (
+            DOMPurify.sanitize(html, {
+              ADD_TAGS: ["iframe"],
+              ADD_ATTR: [
+                "width",
+                "height",
+                "allow",
+                "allowfullscreen",
+                "frameborder",
+                "scrolling",
+                "style",
+                "title",
+                "loading",
+                "allowtransparency"
+              ]
+            }) || ""
+          );
+        }
+      });
+  
+      $node.data("data-toast-editor", viewer);
+      viewer.setMarkdown(article_context);
+    });
+    
+  }
+
+let queryparams = "?type={%if article %}update{%else%}post{% endif %}&&article_id={{article.id}}"
+  function article_post(form){
+      form.title.value = form.title.value.trim();
+      if (form.title.length==0){
+          alert('제목을 입력해주세요')
+          form.title.focus()
+          return false;
+      }
+      let title = form.title.value;
+      let context = editor.getMarkdown();
+      var error_code = 0
+      if(title.length==0){
+        alert("제목은 필수입니다.")
+        error_code ++
+      }else if(context.length==0){
+        alert("내용은 필수입니다.")
+        error_code ++
+      }
+      if(error_code){
+        return false;
+      }
+      let tags = $('.hash_input').val()
+      let token = "randomstring"
+      console.log(queryparams)
+      $.post(
+        "{% url 'blog:edit' blog.id %}"+queryparams,
+          {
+              csrfmiddlewaretoken:form.csrfmiddlewaretoken.value,
+              token,
+              title,
+              context,
+              tags,
+          },
+          function(data){
+            if(data['type']=='created'){
+              alert('게시물이 생성되었습니다.')
+            }else{
+              alert('게시물이 저장되었습니다.')
+            }
+              console.log(data)
+              queryparams = `?type=update&&article_id=${data['article_id']}`
+          },
+          'json'
+      )
+  }
+
+
+  $(function () {
+      ToastEditor__init();
+      ToastEditorView__init();
+    });
+</script>

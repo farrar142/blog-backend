@@ -1,0 +1,62 @@
+#left,#right{
+	width:7%;
+	margin-left:2vw;
+    margin-right:2vw;
+    top:8vh;
+}
+.sticky{
+	position:sticky;
+    top:20vh;
+    height:60vh;
+    overflow-y: scroll;
+}
+.sticky::-webkit-scrollbar {
+    display: none;
+}
+@media (max-width:1000px){
+	#left,#right{
+		opacity:0;
+		width:0%;
+		padding-left:0px;
+		padding-right:0px;
+		margin-left:0px;
+		margin-right:0px;
+	}
+	#center{
+		width:95%;
+	}
+}
+#left>.sticky>.ellip>.button{
+	font-size:0.6rem;
+	}
+/* right start */
+.todo-con{
+	margin-top:10px;
+	height:250px;
+	overflow-y: scroll;
+}
+.todo-card{
+	margin:5px;
+}
+.todo-content{
+	overflow-x: scroll;
+}
+.todo-status{
+	text-align: center;
+	display:flex;
+	justify-content: center;;
+	overflow-x: hidden !important;
+	text-overflow: ellipsis !important;
+}
+.todo-status>.button>button{
+	margin:auto;
+	margin-top:5px;
+}
+.none-scroll::-webkit-scrollbar {
+    display: none;
+}
+.comment-con{
+	margin-top:20px;
+	height:250px;
+}
+/* right end */

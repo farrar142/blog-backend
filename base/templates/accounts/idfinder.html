@@ -1,0 +1,14 @@
+{% extends 'accounts/layout.html' %}
+{% block article_layout %}
+<div class="container my-3">
+    <form method="post" class="post-form" action="{% url 'accounts:idfinder' %}">
+        {% csrf_token %}
+        {% include "form_errors.html" %}
+        <label for="email"></label>
+        <input type="email" class="form-control" name="email" id="email"
+                value="{{ email|default_if_none:'' }}"
+                placeholder="이메일을 입력해주세요">
+        <button>id찾기</button>
+    </form>
+</div>
+{% endblock %}

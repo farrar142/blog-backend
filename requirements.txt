@@ -1,0 +1,13 @@
+django
+mysqlclient
+pillow
+django-ninja
+django-cors-headers
+
+django-redis
+django-celery-results
+django-celery-beat
+django-inlinecss
+
+celery==5.2.3
+redis

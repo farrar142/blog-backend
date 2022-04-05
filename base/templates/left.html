@@ -1,0 +1,19 @@
+{% load tags %}
+{% if blog %}
+    <div>태그 목록</div>
+    <div class="ellip">
+        {% if blog.articles.count %}
+        <a class="button"href="{% url 'blog:blog' blog.pk %}">
+            전체글 ({{blog|get_valid_articles}})
+        </a>
+        {% endif %}
+    </div>
+    {% for tag in blog.id|get_tags %}
+    <div class="ellip">
+        
+        <a class="button"href="{% url 'blog:blog' blog.pk %}?hashtag={{tag.name|urlencode}}" >
+            #{{tag.name}} ({{tag.count}})
+        </a>
+    </div>
+    {% endfor %}
+{% endif %}

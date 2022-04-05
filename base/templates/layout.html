@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 폰트어썸 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link rel="stylesheet" href="{% static 'aside.css' %}">
+    <link rel="stylesheet" href="{% static 'blog.css' %}">
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <title>Blog I Use</title>
+    {% include 'src/nav_js.html' %}
+    {% block meta %}
+    {% endblock %}
+</head>
+<body>
+    <div id="root">
+        <div id="header"> 
+            {% include 'header.html' %}
+        </div> 
+        <div id="content">  
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+                        {{ message.message }} 
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <section class="section">
+                <div id="left" class="t-30">
+                    <div class="sticky">
+                        {% include 'left.html' %}
+                    </div>
+                </div>
+                <div id="main">
+                    {% block layout %}
+                    {% endblock %}
+                </div>
+                <div id="right" class="t-30">
+                    <div class="sticky">
+                        {% include 'right.html' %}
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div id="footer">
+            {% include 'footer.html' %}
+        </div>
+    </div>
+    {% block footer%}
+    {% endblock %}
+</body>
+</html>

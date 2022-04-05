@@ -1,0 +1,108 @@
+{% extends 'blog/layout.html' %}
+{% block article_meta %}
+{{article.context|json_script:"context"}}
+{% endblock %}
+{% block article_layout %}
+<div class="article detail">
+    {% if request.user.is_authenticated %}
+    <form action="{% url 'blog:edit' blog.pk %}?article_id={{article.pk}}&type=update" method="post">
+        {% csrf_token %}
+        <button type="submit">수정</button>        
+    </form>
+    {% endif %}
+    {% if article %}
+    <div class="article title">
+        {{article.title}}
+    </div>
+    <div class='article tags'>
+        {% for tag in article.tags.all %}
+        <span> #{{tag.name}}</span>
+        {% endfor %}
+    </div>
+    <div class="article date">
+       게시 : {{article.reg_date}}
+    </div>
+    {% if article.update_date %}
+    <div class="article date">
+       수정 : {{article.update_date}}
+    </div>
+    {% endif %}
+    {% endif %}
+    <div class='toast-ui-viewer'></div>
+    
+    {% if request.user.is_authenticated %}
+    <form action="{% url 'blog:edit' blog.pk %}?article_id={{article.pk}}&type=delete" method="post">
+        {% csrf_token %}
+        <button type="submit">글삭제</button>        
+    </form>
+    {% endif %}
+    <div>
+    {% for comment in comments %}
+        <div>
+            <div class="comment-owner">작성자 : 
+                {% if comment.user %}
+                {{comment.user}}
+                {% else %}
+                {{comment.username}}
+                {% endif %}
+            </div>
+            <div>{{comment.context}}</div>
+            <form action="{% url 'blog:comment' blog.pk article.pk %}?type=delete&comment={{comment.pk}}" method="post">
+                {%csrf_token%}
+                <button type="submit">댓글삭제</button>
+            </form>
+        </div>
+        {% for recomment in comment.childs.all %}
+        <div class="re">
+            <div class="comment-owner">작성자 : 
+                {% if comment.user %}
+                {{comment.user}}
+                {% else %}
+                {{comment.username}}
+                {% endif %}
+            </div>
+            <div>{{comment.context}}</div>
+            <form action="{% url 'blog:comment' blog.pk article.pk %}?type=delete&comment={{comment.pk}}" method="post">
+                {%csrf_token%}
+                <button type="submit">댓글삭제</button>
+            </form>
+        </div>
+        {% endfor %}
+        <form class = "re comment-form"action="{% url 'blog:comment' blog.pk article.pk %}?type=post&parent={{comment.pk}}" method = "post">
+            {% csrf_token %}    
+            {% if request.user.is_authenticated %}
+            <div class="button">{{request.user.username}}</div>
+            {% else %}
+            <div class="unauthen">
+                <input class="half"placeholder="이름을입력해주세요"type="text" name="username" autocomplete=false>
+                <input class="half"placdholder="비밀번호를입력해주세요" type="password" name="password" autocomplete=false>
+            </div>
+            {% endif %}
+            <input type="text" name="context" placeholder="댓글을 적어주세요" autocomplete=false>
+            
+            <button type="submit">대댓글등록</button> 
+        </form>
+        {% endfor %}
+    </div>
+
+
+
+    <form class = "comment-form"action="{% url 'blog:comment' blog.pk article.pk %}?type=post" method = "post">
+        {% csrf_token %}    
+        {% if request.user.is_authenticated %}
+        <div class="button">{{request.user.username}}</div>
+        {% else %}
+        <div class="unauthen">
+            <input class="half"placeholder="이름을입력해주세요"type="text" name="username" autocomplete=false>
+            <input class="half"placdholder="비밀번호를입력해주세요" type="password" name="password" autocomplete=false>
+        </div>
+        {% endif %}
+        <input type="text" name="context" placeholder="댓글을 적어주세요" autocomplete=false>
+        
+        <button type="submit">댓글등록</button> 
+    </form>
+</div>
+{% endblock %}
+{% block article_footer %}
+{% include 'blog/src/toastui_js.html' %}
+{% endblock%}

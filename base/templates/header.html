@@ -1,0 +1,30 @@
+
+<div class="nav-items">
+    <a href="{% url 'index' %}">
+        메인으로
+    </a>
+</div>
+<div class="nav-items">
+    {% if blog %}
+    <a href="{% url 'blog:blog' blog.pk %}">
+        {{blog.name}}
+    </a>
+    {% else %}
+    블로그에요
+    {% endif %}
+    {% comment %} <form action="{% url 'index' %}" method="get">
+        <input type="text" placeholder="검색을해보자">
+    </form> {% endcomment %}
+    
+</div>
+<div class = "nav-items">
+{% if request.user.is_authenticated %}
+    <a href="{% url 'accounts:signout' %}" method="get">
+        로그아웃
+    </a>
+{% else %}
+<a href="{% url 'accounts:signin' %}" method="get">
+    로그인
+</a>
+{% endif %}
+</div>

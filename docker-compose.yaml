@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  blog:
+    build: .
+    container_name : blog
+    # command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+        - .:/usr/src/app
+    ports:
+        - 8000:8000
+    restart: unless-stopped

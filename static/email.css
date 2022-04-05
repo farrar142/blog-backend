@@ -1,0 +1,12 @@
+.email_con {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.empty {
+  height: 10vh;
+}
+.title {
+  margin: auto;
+}
